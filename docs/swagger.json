@@ -1,0 +1,239 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Microservice for managing organizational units and their users.",
+        "title": "Reactive Organizational Units API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8443",
+    "basePath": "/",
+    "paths": {
+        "/units": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "units"
+                ],
+                "summary": "List organizational units with pagination",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Unit"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Adds a unit; if UnitID provided it's overridden, CreationDate auto-set",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "units"
+                ],
+                "summary": "Create a new organizational unit",
+                "parameters": [
+                    {
+                        "description": "Unit data",
+                        "name": "unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UnitBoundary"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Unit"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "units"
+                ],
+                "summary": "Delete all organizational units",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/units/{unitId}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "units"
+                ],
+                "summary": "Get a specific organizational unit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "unitId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Unit"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "units"
+                ],
+                "summary": "Update an organizational unit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "unitId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated unit data",
+                        "name": "unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UnitBoundary"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.HTTPError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "the HTTP status code\nexample: 400",
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "description": "a descriptive error message\nexample: bad request",
+                    "type": "string",
+                    "example": "bad request"
+                }
+            }
+        },
+        "models.Unit": {
+            "description": "Unit entity with auto-generated ID and creation date",
+            "type": "object",
+            "properties": {
+                "creationDate": {
+                    "description": "@CreationDate in dd-MM-yyyy format",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "@Description of this unit",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "@Name of the unit",
+                    "type": "string"
+                },
+                "unitId": {
+                    "description": "@ID",
+                    "type": "string"
+                },
+                "users": {
+                    "description": "@Users assigned to this unit (email identifiers)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.UnitBoundary": {
+            "type": "object",
+            "properties": {
+                "creationDate": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "unitId": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
